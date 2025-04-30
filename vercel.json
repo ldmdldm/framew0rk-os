@@ -1,12 +1,16 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm run build",
-        "outputDirectory": "dist"
+        "outputDirectory": "dist",
+        "installCommand": "npm install"
       }
     }
   ],
@@ -19,13 +23,13 @@
   "env": {
     "VITE_API_URL": "https://api.yourdomain.com",
     "VITE_ENVIRONMENT": "production",
-    "VITE_CONTRACT_ADDRESS": "@contract_address",
+    "VITE_CONTRACT_ADDRESS": "0x0000000000000000000000000000000000000000",
     "VITE_WEB3_PROVIDER_URL": "https://mainnet.infura.io/v3/776ec662181b40f18a91f45a4338f95c",
     "VITE_INFURA_API_KEY": "776ec662181b40f18a91f45a4338f95c",
-    "VITE_JWT_SECRET": "@jwt_secret",
+    "VITE_JWT_SECRET": "your-jwt-secret-key",
     "VITE_LLM_PROVIDER": "gemini",
     "VITE_LLM_MODEL": "gemini-pro",
-    "VITE_LLM_API_KEY": "AIzaSyAcS4nZNyI62vlLoKv-MOtJ9IEp-d-u9WE",
+    "VITE_LLM_API_KEY": "@gemini_api_key",
     "VITE_LLM_TEMPERATURE": "0.7",
     "VITE_LLM_MAX_TOKENS": "2000"
   }
