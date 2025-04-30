@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://backend:8000
+      - VITE_ENVIRONMENT=production
+    depends_on:
+      - backend
+    networks:
+      - agent-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/agent-framework
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=http://localhost
+      - WEB3_PROVIDER_URL=${WEB3_PROVIDER_URL}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  backup:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/scripts:/scripts
+      - ./backups:/backups
+    entrypoint: ["/bin/sh", "/scripts/backup.sh"]
+    depends_on:
+      - mongodb
+    networks:
+      - agent-network
+
+networks:
+  agent-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
+  backups:
